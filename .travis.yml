@@ -1,0 +1,15 @@
+sudo: required
+language: java
+jdk:
+ - openjdk7
+ - oraclejdk7
+ - oraclejdk8
+services:
+  - docker
+before_install:
+  - docker pull neo4j:2.3.2
+  - docker run --detach --publish=7474:7474 --volume=$HOME/neo4j/data:/data --env=NEO4J_AUTH=neo4j/j4oen neo4j
+install: true
+os:
+ - linux
+script: "mvn -T4 clean test"
