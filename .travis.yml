@@ -7,6 +7,13 @@ jdk:
 services:
   - docker
 before_install:
+# Workaround for Travis CI buffer overflow with OpenJDK 7
+# Details: https://github.com/travis-ci/travis-ci/issues/5227#issuecomment-165131913
+  - cat /etc/hosts # optionally check the content *before*
+  - sudo hostname "$(hostname | cut -c1-63)"
+  - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts | sudo tee /etc/hosts
+  - cat /etc/hosts # optionally check the content *after*
+# End of workaround
   - docker pull neo4j:2.3.2
   - docker run --detach --publish=7474:7474 --volume=$HOME/neo4j/data:/data --env=NEO4J_AUTH=neo4j/j4oen neo4j
 install: true
